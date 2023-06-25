@@ -6,7 +6,6 @@ from recipes.models import RecipeIngredientsAmount
 FILENAME = 'shopping list'
 
 
-
 def get_shopping_list_file(request):
     """Функция генерации тектового файла. Возвращает response
     в виде файла со списком ингредиентов, необходимых для приготовления
@@ -14,17 +13,15 @@ def get_shopping_list_file(request):
 
     shopping_list = "Cписок покупок:"
     ingredients = RecipeIngredientsAmount.objects.filter(
-            recipe__shopping_cart__user=request.user
-        ).values(
+        recipe__shopping_cart__user=request.user).values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(amount=Sum('amount'))
-    print(ingredients.count())
     for ingredient_number, ingredient in enumerate(ingredients):
         shopping_list += (
-                f"\n{ingredient['ingredient__name']} - "
-                f"{ingredient['amount']} "
-                f"{ingredient['ingredient__measurement_unit']}"
-            )
+            f"\n{ingredient['ingredient__name']} - "
+            f"{ingredient['amount']} "
+            f"{ingredient['ingredient__measurement_unit']}"
+        )
         if ingredient_number < ingredients.count() - 1:
             shopping_list += ','
     response = HttpResponse(
@@ -33,6 +30,5 @@ def get_shopping_list_file(request):
     )
     response[
         'Content-Disposition'
-        ] = f'attachment; filename="{FILENAME}.txt"'
-    print('Отдал респонс если ингридиентов больше чем 1')
+    ] = f'attachment; filename="{FILENAME}.txt"'
     return response
