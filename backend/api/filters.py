@@ -37,7 +37,7 @@ class RecipeFilter(filter.FilterSet):
             'author',
             'is_favorited',
             'is_in_shopping_cart'
-            )
+        )
 
     def get_favorite(self, queryset, name, value):
         """Метод получения списка рецептов
