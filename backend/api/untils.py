@@ -14,8 +14,9 @@ def get_shopping_list_file(request):
     shopping_list = "Cписок покупок:"
     ingredients = RecipeIngredientsAmount.objects.filter(
         recipe__shopping_cart__user=request.user).values(
-            'ingredient__name', 'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount'))
+        'ingredient__name', 'ingredient__measurement_unit').annotate(
+        amount=Sum('amount')
+    )
     for ingredient_number, ingredient in enumerate(ingredients):
         shopping_list += (
             f"\n{ingredient['ingredient__name']} - "
