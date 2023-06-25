@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+
 from users.models import User
 
 
@@ -70,6 +71,7 @@ class Ingredient(models.Model):
             )
         ]
 
+
 class Recipe(models.Model):
     """Модель рецепта."""
 
@@ -77,7 +79,7 @@ class Recipe(models.Model):
         Tag,
         related_name='recipe',
         verbose_name='Теги',
-        help_text='Отметьте теги, подходящие Вашему блюду'
+        help_text='Отметьте подходящие теги'
     )
     author = models.ForeignKey(
         User,

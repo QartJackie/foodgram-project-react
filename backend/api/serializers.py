@@ -1,13 +1,13 @@
 import base64
-
 import webcolors
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
-from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
-                            RecipeIngredientsAmount, ShoppingCart, Tag)
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
+
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
+                            RecipeIngredientsAmount, ShoppingCart, Tag)
 from users.serializers import CustomUserSerializer, ShortRecipeSerializer
 
 

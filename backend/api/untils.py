@@ -1,15 +1,10 @@
 from django.db.models import Sum
 from django.http import HttpResponse
+
 from recipes.models import RecipeIngredientsAmount
 
 FILENAME = 'shopping list'
 
-
-def get_request_from_context(self):
-    """Метод выбора request'a из текущего контектса.
-    Принимает "self", и возвращает "request"."""
-
-    return self.context.get('request')
 
 
 def get_shopping_list_file(request):
