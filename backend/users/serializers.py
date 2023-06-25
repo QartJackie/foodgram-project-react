@@ -1,8 +1,8 @@
-from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from recipes.models import Recipe
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+
+from recipes.models import Recipe
 from users.models import Subscription, User
 from users.validators import unique_user_subscribe_validate
 
