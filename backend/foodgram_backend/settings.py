@@ -7,7 +7,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django_secret_key')
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '130.193.52.79', ]
+ALLOWED_HOSTS = ['127.0.0.1',
+                 'localhost',
+                 '130.193.52.79',
+                 'foodgramweb.hopto.org']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -24,7 +27,6 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
     'core.apps.CoreConfig',
-    'drf_pdf',
 ]
 
 MIDDLEWARE = [
