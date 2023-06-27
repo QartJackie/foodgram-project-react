@@ -178,7 +178,7 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         """Представление полей тега."""
         model = Tag
-        fields = ('name', 'color', 'slug',)
+        fields = ('id', 'name', 'color', 'slug',)
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -187,7 +187,7 @@ class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         """Представление полей ингредиента."""
         model = Ingredient
-        fields = ('name', 'measurement_unit',)
+        fields = ('id', 'name', 'measurement_unit',)
 
 
 class ReadIngredientamountSerializer(serializers.ModelSerializer):
@@ -246,13 +246,24 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
     def validate(self, recipe_data):
         ingredients = self.initial_data.get('ingredients')
-        if len(ingredients) <= 1:
+        print('ИНГРЕДИЕНТЫ ВОТ ОНИ!')
+        print(ingredients)
+        print()
+        print('ДАЛЬШЕ ДЛИНА СПИСКА')
+        print(len(ingredients))
+
+        if len(ingredients) <= 0:
             raise serializers.ValidationError(
                 {'message': 'Добавьте ингредиенты'}
             )
+
         for ingredient in ingredients:
             amount = int(ingredient['amount'])
-            if not amount >= 1:
+            print()
+            print('А ВОТ КОЛИЧЕСТВО')
+            print(amount)
+
+            if not amount > 0:
                 raise serializers.ValidationError(
                     {'message':
                      'Нельзя установить количество '
