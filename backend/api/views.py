@@ -5,7 +5,7 @@ from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
                             Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from api.filters import IngredientFilter, RecipeFilter, TagFilter
@@ -25,7 +25,8 @@ class TagsViewSet(viewsets.ModelViewSet):
 
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [AllowAny, ]
+    permission_classes = [IsAdminOrReadOnly, ]
+    filter_backends = [IsAdminOrReadOnly, ]
     filter_backends = [TagFilter, ]
     search_fields = ['^name', ]
     pagination_class = None
@@ -36,7 +37,7 @@ class IngridientsViewSet(viewsets.ModelViewSet):
 
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = [AllowAny, ]
+    permission_classes = [IsAdminOrReadOnly, ]
     filter_backends = [IngredientFilter, ]
     search_fields = ['^name', ]
     pagination_class = None

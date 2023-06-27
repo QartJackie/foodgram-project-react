@@ -246,12 +246,6 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
     def validate(self, recipe_data):
         ingredients = self.initial_data.get('ingredients')
-        print('ИНГРЕДИЕНТЫ ВОТ ОНИ!')
-        print(ingredients)
-        print()
-        print('ДАЛЬШЕ ДЛИНА СПИСКА')
-        print(len(ingredients))
-
         if len(ingredients) <= 0:
             raise serializers.ValidationError(
                 {'message': 'Добавьте ингредиенты'}
@@ -259,10 +253,6 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
         for ingredient in ingredients:
             amount = int(ingredient['amount'])
-            print()
-            print('А ВОТ КОЛИЧЕСТВО')
-            print(amount)
-
             if not amount > 0:
                 raise serializers.ValidationError(
                     {'message':
