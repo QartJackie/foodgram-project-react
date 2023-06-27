@@ -1,8 +1,20 @@
 from django.db.models import Sum
 from django.http import HttpResponse
+from foodgram_backend.settings import UPLOAD_FILE_NAME
 from recipes.models import RecipeIngredientsAmount
 
-FILENAME = 'shopping list'
+
+def convert_ingredient_data_for_create(self, ingredients, recipe):
+    ingredient_list = []
+    for ingredient in ingredients:
+        ingredient_data = {}
+        ingredient_data['ingredient_id'] = ingredient['id']
+        ingredient_data['recipe_id'] = recipe.pk
+        ingredient_data['amount'] = ingredient['amount']
+        ingredient_list.append(
+            ingredient_data
+        )
+    return ingredient_list
 
 
 def get_shopping_list_file(request):
@@ -29,5 +41,5 @@ def get_shopping_list_file(request):
     )
     response[
         'Content-Disposition'
-    ] = f'attachment; filename="{FILENAME}.txt"'
+    ] = f'attachment; filename="{UPLOAD_FILE_NAME}.txt"'
     return response

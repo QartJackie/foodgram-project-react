@@ -1,6 +1,7 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from foodgram_backend import model_settings as set
 from users.models import User
 
 
@@ -8,7 +9,7 @@ class Tag(models.Model):
     """Модель тега."""
     name = models.CharField(
         'Название тега',
-        max_length=200,
+        max_length=set.TAG_NAME_LENGTH,
         unique=True,
         blank=False,
         null=False,
@@ -17,7 +18,7 @@ class Tag(models.Model):
     )
     color = models.CharField(
         'Цвет тега',
-        max_length=16,
+        max_length=set.TAG_COLOR_NAME_LENGTH,
         blank=False,
         null=False,
         help_text='Добавьте цвет тега в hex формате',
@@ -30,20 +31,20 @@ class Tag(models.Model):
         help_text='Добавьте слаг',
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         ordering = ['name']
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
+
+    def __str__(self):
+        return self.name
 
 
 class Ingredient(models.Model):
     """Модель ингридиента."""
     name = models.CharField(
         'Название ингридиента',
-        max_length=200,
+        max_length=set.INGREDIENT_NAME_LENGTH,
         null=False,
         blank=False,
         db_index=True,
@@ -51,14 +52,11 @@ class Ingredient(models.Model):
     )
     measurement_unit = models.CharField(
         'Мера измерения ингридиента',
-        max_length=200,
+        max_length=set.INGREDIENT_MEASUREMENT_UNIT_LENGTH,
         blank=False,
         null=False,
         help_text='Укажите меру измерения, например граммы или литры',
     )
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         ordering = ['name']
@@ -70,6 +68,9 @@ class Ingredient(models.Model):
                 name='unique_measurement',
             )
         ]
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -96,7 +97,7 @@ class Recipe(models.Model):
     )
     name = models.CharField(
         'Название рецепта',
-        max_length=200,
+        max_length=set.RECIPE_NAME_LENGTH,
         null=False,
         blank=False,
         help_text='Назовите рецепт',
@@ -110,7 +111,7 @@ class Recipe(models.Model):
     )
     text = models.TextField(
         'Описание рецепта',
-        max_length=200,
+        max_length=set.RECIPE_TEXT_LENGTH,
         null=False,
         blank=False,
         help_text='Опишите процесс приготовления блюда',
@@ -119,7 +120,11 @@ class Recipe(models.Model):
         'Время приготовления (в минутах)',
         null=False,
         blank=False,
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(
+            1,
+            message='Время приготовления должно быть больше 1'
+        )
+        ],
         help_text='Укажите время приготовления в минутах',
     )
     create_at = models.DateTimeField('Дата создания', auto_now_add=True)
@@ -161,10 +166,6 @@ class RecipeIngredientsAmount(models.Model):
                   'добавить в соответствующей мере изменения?'
     )
 
-    def __str__(self):
-        return (f'Ингрединет: {self.ingredient.name}'
-                f'из рецепта: {self.recipe.name}')
-
     class Meta:
         """Сортировка выдачи и проверка уникальности ингредиентов."""
 
@@ -174,9 +175,13 @@ class RecipeIngredientsAmount(models.Model):
                 name='unique_ingredients',
             )
         ]
-        ordering = ['-id']
+        ordering = ['recipe']
         verbose_name = 'Ингредиент в рецепте'
         verbose_name_plural = 'Ингредиенты в рецептах'
+
+    def __str__(self):
+        return (f'Ингрединет: {self.ingredient.name}'
+                f'из рецепта: {self.recipe.name}')
 
 
 class ShoppingCart(models.Model):
@@ -199,9 +204,6 @@ class ShoppingCart(models.Model):
         auto_now_add=True,
     )
 
-    def __str__(self):
-        return f'Рецепт "{self.recipe.name}" в покупках у {self.user}'
-
     class Meta:
         """Представление модели и валидация уникальности."""
         constraints = [
@@ -213,6 +215,9 @@ class ShoppingCart(models.Model):
         ordering = ['-create_at']
         verbose_name = 'Покупка'
         verbose_name_plural = 'Покупки'
+
+    def __str__(self):
+        return f'Рецепт "{self.recipe.name}" в покупках у {self.user}'
 
 
 class FavoriteRecipe(models.Model):
@@ -235,9 +240,6 @@ class FavoriteRecipe(models.Model):
         auto_now_add=True
     )
 
-    def __str__(self):
-        return f'Рецепт "{self.recipe}" в избранном у {self.user}'
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -248,3 +250,6 @@ class FavoriteRecipe(models.Model):
         ordering = ['-create_at']
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
+
+    def __str__(self):
+        return f'Рецепт "{self.recipe}" в избранном у {self.user}'

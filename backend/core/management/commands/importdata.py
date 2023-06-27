@@ -16,16 +16,11 @@ class Command(BaseCommand):
             print('Данные прочитаны.')
             print('Началась загрузка ингредиентов.')
             try:
-                for ingredient in jsondata:
-                    if not Ingredient.objects.filter(
-                        name=ingredient['name'],
-                        measurement_unit=ingredient['measurement_unit']
-                    ).exists():
-                        Ingredient.objects.create(
-                            name=ingredient['name'],
-                            measurement_unit=ingredient['measurement_unit'])
-                ingredients_count = Ingredient.objects.all().count()
-                print(f'{ingredients_count} ингрединетов импортировано.')
+                Ingredient.objects.bulk_create(
+                    [Ingredient(**ingredient) for ingredient in jsondata]
+                )
+                print(f'{Ingredient.objects.all().count()} '
+                      'ингрединетов импортировано.')
                 print('Импорт завершен.')
             except Exception as error_message:
                 raise Exception(error_message)

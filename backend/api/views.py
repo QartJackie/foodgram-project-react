@@ -1,24 +1,23 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
+                            Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from api.filters import IngredientFilter, RecipeFilter, TagFilter
 from api.pagination import LimitOffsetPagination
-from api.permission import IsAdminOrReadOnly, IsAuthorOrAdminOrReadOnly
-from api.serializers import (CreateRecipeSerializer, FavoriteRecipesSerializer,
-                             IngredientSerializer, ReadRecipeSerializer,
-                             ShoppingCartSerializer, TagSerializer)
+from api.permission import IsAuthorOrAdminOrReadOnly
+from api.serializers import (CreateRecipeSerializer, CustomUserSerializer,
+                             FavoriteRecipesSerializer, IngredientSerializer,
+                             ReadRecipeSerializer, ShoppingCartSerializer,
+                             SubscriptionsSerializer, TagSerializer,
+                             UserSubscribeSerializer)
 from api.untils import get_shopping_list_file
-from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
-                            Tag)
-
 from users.models import Subscription, User
-from users.serializers import (CustomUserSerializer, SubscriptionsSerializer,
-                               UserSubscribeSerializer)
 
 
 class TagsViewSet(viewsets.ModelViewSet):
@@ -26,7 +25,7 @@ class TagsViewSet(viewsets.ModelViewSet):
 
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [IsAdminOrReadOnly, ]
+    permission_classes = [IsAdminUser, ]
     filter_backends = [TagFilter, ]
     search_fields = ['^name', ]
     pagination_class = None
@@ -37,7 +36,7 @@ class IngridientsViewSet(viewsets.ModelViewSet):
 
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = [IsAdminOrReadOnly, ]
+    permission_classes = [IsAdminUser, ]
     filter_backends = [IngredientFilter, ]
     search_fields = ['^name', ]
     pagination_class = None
@@ -78,30 +77,24 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def is_favorited_manage(self, request, pk):
         """Метод добавления рецепта или его удаления из избранного."""
 
-        user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
-        data = {'user': user.pk, 'recipe': recipe.pk}
-
         if request.method == 'POST':
             serializer = FavoriteRecipesSerializer(
-                data=data,
+                data={'user': request.user.pk, 'recipe': recipe.pk},
                 context={'request': request}
             )
             serializer.is_valid(raise_exception=True)
-            serializer.save(user=user, recipe=recipe)
+            serializer.save(user=request.user, recipe=recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if request.method == 'DELETE':
-            favorited_recipe = get_object_or_404(
-                FavoriteRecipe,
-                user=user,
-                recipe=recipe
-            )
-            favorited_recipe.delete()
-            response_data = {'message': 'Рецепт удален из избранного.'}
-            return Response(response_data, status=status.HTTP_204_NO_CONTENT)
-        response_data = {'detail': f'Метод {request.method} не разрешен.'}
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        favorited_recipe = get_object_or_404(
+            FavoriteRecipe,
+            user=request.user,
+            recipe=recipe
+        )
+        favorited_recipe.delete()
+        response_data = {'message': 'Рецепт удален из избранного.'}
+        return Response(response_data, status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['post', 'delete'], detail=True,
             url_name='shopping_cart', url_path='shopping_cart',
@@ -109,24 +102,24 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def shopping_cart_manage(self, request, pk):
         """Менеджер списка покупок. Дообавляет или удаляет рецепт из списка."""
 
-        user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
-        data = {'user': user.pk, 'recipe': recipe.pk}
         if request.method == 'POST':
             serializer = ShoppingCartSerializer(
-                data=data,
+                data={'user': request.user.pk, 'recipe': recipe.pk},
                 context={'request': request})
             serializer.is_valid(raise_exception=True)
-            serializer.save(user=user, recipe=recipe)
+            serializer.save(user=request.user, recipe=recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        if request.method == 'DELETE':
-            cart = get_object_or_404(ShoppingCart, user=user, recipe=recipe)
-            cart.delete()
-            response_data = {
-                'message': 'Теперь этот рецепт не в списке покупок'
-            }
-            return Response(response_data, status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        cart = get_object_or_404(
+            ShoppingCart,
+            user=request.user,
+            recipe=recipe
+        )
+        cart.delete()
+        response_data = {
+            'message': 'Теперь этот рецепт не в списке покупок'
+        }
+        return Response(response_data, status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['get'],
             detail=False,
@@ -155,7 +148,7 @@ class AllUserViewSet(UserViewSet):
             permission_classes=(IsAuthenticated,))
     def subscribe(self, request, id):
         """Метод подписки модели пользователя."""
-        user = request.user
+
         author = get_object_or_404(User, pk=id)
         data = {'user': request.user.pk, 'author': id}
         if request.method == 'POST':
@@ -164,22 +157,16 @@ class AllUserViewSet(UserViewSet):
                 context={'request': request}
             )
             serializer.is_valid(raise_exception=True)
-            serializer.save(user=user, author=author)
+            serializer.save(user=request.user, author=author)
             return Response(serializer.data,
                             status=status.HTTP_201_CREATED)
-        if request.method == 'DELETE':
-            subscription = get_object_or_404(
-                Subscription,
-                user=request.user,
-                author=author)
-            subscription.delete()
-            response_data = {'detail': 'Вы отписались от автора.'}
-            return Response(response_data, status=status.HTTP_204_NO_CONTENT)
-        response_data = {'detail': 'Метод не разрешен'}
-        return Response(
-            response_data,
-            status=status.HTTP_405_METHOD_NOT_ALLOWED
-        )
+        subscription = get_object_or_404(
+            Subscription,
+            user=request.user,
+            author=author)
+        subscription.delete()
+        response_data = {'detail': 'Вы отписались от автора.'}
+        return Response(response_data, status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False,
             methods=['post', 'delete'],
