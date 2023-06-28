@@ -142,7 +142,7 @@ class AllUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
 
-    @action(detail=False,
+    @action(detail=True,
             methods=['post', 'delete'],
             url_name='subscribe',
             url_path='subscribe',
