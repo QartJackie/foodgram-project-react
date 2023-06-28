@@ -22,7 +22,8 @@ services:
     depends_on:
       - postgres
   frontend:
-    image: qartjackie/foodgram-backend
+    image: qartjackie/foodgram-frontend
+    env_file: .env
     command: cp -r /app/build/. /static/
     volumes:
       - static:/static
