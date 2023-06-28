@@ -142,16 +142,16 @@ class AllUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
 
-    @action(detail=False,
+    @action(detail=True,
             methods=['post', 'delete'],
             url_name='subscribe',
-            url_path='subscribe',
-            permission_classes=(IsAuthenticated,))
+            url_path='subscribe',)
     def subscribe(self, request, id):
         """Метод подписки модели пользователя."""
-
+        print('начало подписка')
         author = get_object_or_404(User, pk=id)
         data = {'user': request.user.pk, 'author': id}
+        print(f'Перед тем как проверить метож {request.method}')
         if request.method == 'POST':
             serializer = UserSubscribeSerializer(
                 data=data,
@@ -170,12 +170,13 @@ class AllUserViewSet(UserViewSet):
         return Response(response_data, status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False,
-            methods=['post', 'delete'],
-            url_name='subscribe',
-            url_path='subscribe',
+            methods=['get'],
+            url_name='subscriptions',
+            url_path='subscriptions',
             permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
         """Метод запроса всех подписок модели пользователя."""
+
         queryset = Subscription.objects.filter(user=request.user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscriptionsSerializer(

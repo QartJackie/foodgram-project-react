@@ -22,11 +22,11 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework',
     'django_filters',
-    'djoser',
     'recipes.apps.RecipesConfig',
     'users.apps.UsersConfig',
     'api.apps.ApiConfig',
     'core.apps.CoreConfig',
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -129,6 +129,7 @@ DJOSER = {
     'PERMISSIONS': {
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
         'user_list': ['rest_framework.permissions.AllowAny'],
+        'user_detail': ['rest_framework.permissions.AllowAny'],
     },
     'HIDE_USERS': False,
 }

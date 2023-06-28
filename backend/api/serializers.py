@@ -8,7 +8,6 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
 
-from api.validators import unique_user_subscribe_validate
 from api.utils import convert_ingredient_data_for_create
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
                             RecipeIngredientsAmount, ShoppingCart, Tag)
@@ -141,7 +140,6 @@ class UserSubscribeSerializer(serializers.ModelSerializer):
                 message='Вы уже подписаны на этого автора.'
             )
         ]
-        validators = unique_user_subscribe_validate
 
     def to_representation(self, instance):
         """Репрезентация подписки в виде модели пользователя."""
