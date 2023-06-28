@@ -16,7 +16,7 @@ from api.serializers import (CreateRecipeSerializer, CustomUserSerializer,
                              ReadRecipeSerializer, ShoppingCartSerializer,
                              SubscriptionsSerializer, TagSerializer,
                              UserSubscribeSerializer)
-from api.untils import get_shopping_list_file
+from api.utils import get_shopping_list_file
 from users.models import Subscription, User
 
 
