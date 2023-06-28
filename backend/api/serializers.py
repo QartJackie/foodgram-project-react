@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.validators import UniqueTogetherValidator
 
 from api.validators import unique_user_subscribe_validate
-from api.untils import convert_ingredient_data_for_create
+from api.utils import convert_ingredient_data_for_create
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
                             RecipeIngredientsAmount, ShoppingCart, Tag)
 from users.models import User, Subscription
@@ -264,20 +264,6 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     def create_ingredient_amount(self, ingredients, recipe):
         """Метод привязки ингридинета к рецепту."""
 
-        # Здесь я не нашел лучшего способа, чем перегнать данные.
-        # Изначально из валидатора достаю OrderDict,в котором нет пк рецепта.
-        # Чтобы конвертировать создал утилиту,
-        # назвал convert_ingredient_data_for_create
-        # так как нужно было добавить в данные рецепт,
-        # без которого bulk create работать не будет.
-        # Ему нужны как пк ингредиента, так и сам рецепт.
-        # На сколько подходит такой вариант? Мы расходуем память, но
-        # делаем меньше запросов к БД. По идее рецепта с
-        # 1000 ингредиентов не будет, а вот обращений к БД может быть много.
-        # Получается лучше так?
-        # OrderDict распаковать с добавлением рецепта я не нашел как.
-        # Конвертирование самый простой и надежный способ как по мне.
-
         ingredient_list = convert_ingredient_data_for_create(
             self, ingredients, recipe
         )
@@ -338,12 +324,6 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             context={'request': self.context.get('request')}
         ).data
 
-# todo: Алексей, написал Вам в пачке, но понимаю, что
-# у вас много дипломов, поэтому напишу здесь пояснение.
-# в общем у меня был сериализатор с кратким представлением рецептов.
-# Но я решил все перенести в апи, так как сериализаторы относятся
-# к этому приложению, не знаю на соклько верно.
-
 
 class ReadRecipeSerializer(serializers.ModelSerializer):
     """Сериализатор для чтения рецептов."""
@@ -378,9 +358,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         """Метод получения статуса избранного рецепта."""
 
         request = self.context.get('request')
-        if not request:
-            return False
-        return FavoriteRecipe.objects.filter(
+        return False if not request else FavoriteRecipe.objects.filter(
             user_id=request.user.pk,
             recipe_id=obj.pk
         ).exists()
@@ -389,9 +367,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         """Метод получения статуса добавления рецепта в список покупок."""
 
         request = self.context.get('request')
-        if not request:
-            return False
-        return ShoppingCart.objects.filter(
+        return False if not request else ShoppingCart.objects.filter(
             user_id=request.user.pk,
             recipe_id=obj.pk
         ).exists()

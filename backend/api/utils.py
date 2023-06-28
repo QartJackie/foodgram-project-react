@@ -1,10 +1,14 @@
 from django.db.models import Sum
 from django.http import HttpResponse
+
 from foodgram_backend.settings import UPLOAD_FILE_NAME
 from recipes.models import RecipeIngredientsAmount
 
 
 def convert_ingredient_data_for_create(self, ingredients, recipe):
+    """Функция конвертирования данных ингредиентов.
+    Конвертирует OrderDict в список словарей."""
+
     ingredient_list = []
     for ingredient in ingredients:
         ingredient_data = {}
