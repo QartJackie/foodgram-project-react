@@ -170,12 +170,13 @@ class AllUserViewSet(UserViewSet):
         return Response(response_data, status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False,
-            methods=['post', 'delete'],
-            url_name='subscribe',
-            url_path='subscribe',
+            methods=['get'],
+            url_name='subscriptions',
+            url_path='subscriptions',
             permission_classes=(IsAuthenticated,))
     def subscriptions(self, request):
         """Метод запроса всех подписок модели пользователя."""
+
         queryset = Subscription.objects.filter(user=request.user)
         pages = self.paginate_queryset(queryset)
         serializer = SubscriptionsSerializer(
