@@ -273,7 +273,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         """Метод создания рецепта."""
 
         request = self.context.get('request')
-        if not request.user and request.user.is_authenticated:
+        if not (request.user and request.user.is_authenticated):
             return Response(
                 {'message': 'Авторизуйтесь, чтобы добавить рецепт'},
                 status=status.HTTP_401_UNAUTHORIZED
@@ -291,9 +291,9 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         recipe = get_object_or_404(Recipe, pk=instance.id)
 
-        if not request.user and (
+        if not (request.user and (
             request.user.is_authenticated
-            and request.user == recipe.author
+            and request.user == recipe.author)
         ):
             return Response(
                 {'message':
