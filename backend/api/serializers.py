@@ -82,7 +82,7 @@ class CustomUserSerializer(UserSerializer):
     def get_is_subscribed(self, user):
         """Метод определения существования подписки на пользователя."""
         request = self.context.get('request')
-        return False if request else Subscription.objects.filter(
+        return False if not request else Subscription.objects.filter(
             user=request.user,
             author=user
         ).exists()
