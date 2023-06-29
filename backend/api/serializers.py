@@ -261,7 +261,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         """Метод привязки ингридинета к рецепту."""
 
         ingredient_list = convert_ingredient_data_for_create(
-            self, ingredients, recipe
+            ingredients, recipe
         )
         RecipeIngredientsAmount.objects.bulk_create(
             [RecipeIngredientsAmount(
