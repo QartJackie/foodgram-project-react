@@ -1,8 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
-                            Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -17,6 +15,8 @@ from api.serializers import (CreateRecipeSerializer, CustomUserSerializer,
                              SubscriptionsSerializer, TagSerializer,
                              UserSubscribeSerializer)
 from api.utils import get_shopping_list_file
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
+                            Tag)
 from users.models import Subscription, User
 
 

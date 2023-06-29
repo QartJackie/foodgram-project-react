@@ -5,9 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'django_secret_key')
 
-DEBUG = True
-
-# DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1',
                  'localhost',
@@ -119,7 +117,6 @@ REST_FRAMEWORK = {
     'rest_framework.pagination.PageNumberPagination',
 
     'PAGE_SIZE': 10,
-
 }
 
 DJOSER = {
