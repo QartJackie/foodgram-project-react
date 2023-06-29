@@ -23,11 +23,17 @@ class IngredientAdmin(admin.ModelAdmin):
         'name',
         'measurement_unit',
     )
+    list_filter = ('name',)
+    search_fields = ('name',)
+
+
+class RecipeIngredients(admin.TabularInline):
+    model = RecipeIngredientsAmount
 
 
 class RecipeAdmin(admin.ModelAdmin):
     """Модель админки рецептов."""
-
+    inlines = [RecipeIngredients, ]
     list_display = (
         'id',
         'author',
@@ -40,16 +46,22 @@ class RecipeAdmin(admin.ModelAdmin):
     readonly_fields = ('added_to_favorites',)
     list_filter = (
         'name',
-        'author',
         'tags',
+        'create_at',
     )
     search_fields = (
         'name',
-        'create_at',
+        'author__email',
+        'author__username',
+        'author__first_name',
+        'author__last_name',
+        'tags__name',
+        'tags__slug',
     )
 
     def added_to_favorites(self, recipe):
         return FavoriteRecipe.objects.filter(recipe=recipe).count()
+    added_to_favorites.short_description = 'Добавлено в избранное раз'
 
 
 class RecipeIngredientsAmountAdmin(admin.ModelAdmin):
@@ -62,6 +74,7 @@ class RecipeIngredientsAmountAdmin(admin.ModelAdmin):
         'ingredient',
         'amount',
     )
+    list_filter = ('recipe__tags', 'recipe__create_at')
 
 
 class ShoppingCartAdmin(admin.ModelAdmin):
@@ -72,6 +85,17 @@ class ShoppingCartAdmin(admin.ModelAdmin):
         'user',
         'create_at'
     )
+    list_filter = (
+        'recipe__tags',
+        'recipe__create_at',
+    )
+    search_fields = (
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+        'user__email',
+        'recipe__name',
+    )
 
 
 class FavoriteRecipeAdmin(admin.ModelAdmin):
@@ -81,6 +105,18 @@ class FavoriteRecipeAdmin(admin.ModelAdmin):
         'recipe',
         'user',
         'create_at',
+    )
+    list_filter = (
+        'user',
+        'recipe__tags',
+        'recipe__create_at',
+    )
+    search_fields = (
+        'user__username',
+        'user__first_name',
+        'user__last_name',
+        'user__email',
+        'recipe__name',
     )
 
 

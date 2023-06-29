@@ -5,7 +5,7 @@ from foodgram_backend.settings import UPLOAD_FILE_NAME
 from recipes.models import RecipeIngredientsAmount
 
 
-def convert_ingredient_data_for_create(self, ingredients, recipe):
+def convert_ingredient_data_for_create(ingredients, recipe):
     """Функция конвертирования данных ингредиентов.
     Конвертирует OrderDict в список словарей."""
 

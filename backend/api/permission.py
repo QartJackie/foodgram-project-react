@@ -5,9 +5,6 @@ class IsAuthorOrAdminOrReadOnly(BasePermission):
     """Решение на уровне объектов. """
     message = 'Недостаточно прав'
 
-    def has_permission(self, request, view):
-        return True
-
     def has_object_permission(self, request, view, obj):
         return request.method in SAFE_METHODS or (
             request.user.is_authenticated and (

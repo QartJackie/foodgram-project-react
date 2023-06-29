@@ -15,7 +15,8 @@ class UserAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'email',
-        'first_name'
+        'first_name',
+        'recipe__tags'
     )
     search_fields = ('email', 'first_name')
     empty_value_display = '-пусто-'
@@ -29,6 +30,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         'author',
         'created_at',
     )
+    list_filter = ('author__recipe__tags',)
     empty_value_display = '-пусто-'
 
 

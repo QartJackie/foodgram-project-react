@@ -11,7 +11,6 @@ class TagFilter(SearchFilter):
 
 class IngredientFilter(SearchFilter):
     """Фильтр ингредиентов по имени."""
-    print('отработала фильтрация по ингредиентам')
     search_param = 'name'
 
 
