@@ -42,8 +42,10 @@ class RecipeAdmin(admin.ModelAdmin):
         'text',
         'cooking_time',
         'create_at',
+        'recipe_ingredients',
+        'added_to_favorites',
     )
-    readonly_fields = ('added_to_favorites',)
+    readonly_fields = ('recipe_ingredients', 'added_to_favorites',)
     list_filter = (
         'name',
         'tags',
@@ -62,6 +64,13 @@ class RecipeAdmin(admin.ModelAdmin):
     def added_to_favorites(self, recipe):
         return FavoriteRecipe.objects.filter(recipe=recipe).count()
     added_to_favorites.short_description = 'Добавлено в избранное раз'
+
+    def recipe_ingredients(self, recipe):
+        ingredient_list = []
+        for ingredient in recipe.ingredients.all():
+            ingredient_list.append(ingredient)
+        return ingredient_list
+    recipe_ingredients.short_description = 'Ингредиенты'
 
 
 class RecipeIngredientsAmountAdmin(admin.ModelAdmin):
