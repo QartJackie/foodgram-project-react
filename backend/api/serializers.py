@@ -81,6 +81,7 @@ class CustomUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, user):
         """Метод определения существования подписки на пользователя."""
+        
         request = self.context.get('request')
         return False if not request else Subscription.objects.filter(
             user=request.user,
@@ -91,6 +92,7 @@ class CustomUserSerializer(UserSerializer):
 class FullVievUserSerializer(CustomUserSerializer):
     """Модель сериализатора для репрезентации USER'a
     с полным прпедставлением, включая рецепты."""
+
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
@@ -103,6 +105,8 @@ class FullVievUserSerializer(CustomUserSerializer):
                                                      'recipes_count']
 
     def get_recipes(self, user):
+        """Метод запроса рецептов пользователя."""
+
         request = self.context.get('request')
         recipes = Recipe.objects.filter(author=user)
 
@@ -120,6 +124,7 @@ class FullVievUserSerializer(CustomUserSerializer):
 
     def get_recipes_count(self, user):
         """Метод выборки количества рецептов пользователя."""
+
         return user.recipe.all().count()
 
 
@@ -153,6 +158,7 @@ class SubscriptionsSerializer(UserSubscribeSerializer):
 
     class Meta:
         """Поля модели подписки"""
+ы
         model = Subscription
         fields = ('user', 'author')
 
@@ -173,6 +179,7 @@ class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
         """Представление полей тега."""
+
         model = Tag
         fields = ('id', 'name', 'color', 'slug',)
 
@@ -182,6 +189,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         """Представление полей ингредиента."""
+
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit',)
 
@@ -197,6 +205,8 @@ class ReadIngredientamountSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
+        """Мета настройки модели."""
+
         model = RecipeIngredientsAmount
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
@@ -228,6 +238,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
+        """Мета настройки сериализатора."""
+
         model = Recipe
         fields = (
             'id',
@@ -241,6 +253,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, recipe_data):
+        """Валидация ингредиентов рецепта при создании."""
+
         ingredients = self.initial_data.get('ingredients')
         if len(ingredients) <= 0:
             raise serializers.ValidationError(
@@ -331,6 +345,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
+        """Мета настройки сериализатора."""
         model = Recipe
         fields = (
             'id',
@@ -347,6 +362,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, obj):
         """Метод получения ингридиента для чтения."""
+
         ingredients = RecipeIngredientsAmount.objects.filter(recipe=obj)
         return ReadIngredientamountSerializer(ingredients, many=True).data
 
@@ -373,6 +389,7 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
     """ Сериализатор сокращенного отображения рецепта пользователя. """
 
     class Meta:
+        """Мета настройки сериализатора."""
         model = Recipe
         fields = ['id', 'name', 'image', 'cooking_time']
 
@@ -381,6 +398,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     """Сериализатор списка покупок."""
 
     class Meta:
+        """Мета настройки сериалиазтора и валидация."""
         model = ShoppingCart
         fields = (
             'id',
@@ -410,6 +428,7 @@ class FavoriteRecipesSerializer(serializers.ModelSerializer):
     """Сериализатор избранных рецептов."""
 
     class Meta:
+        """Мета настройки сериализатора и валидация."""
         model = FavoriteRecipe
         fields = (
             'id',

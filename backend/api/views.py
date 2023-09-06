@@ -148,13 +148,12 @@ class AllUserViewSet(UserViewSet):
             url_path='subscribe',)
     def subscribe(self, request, id):
         """Метод подписки модели пользователя."""
-        print('начало подписка')
+
         author = get_object_or_404(User, pk=id)
-        data = {'user': request.user.pk, 'author': id}
-        print(f'Перед тем как проверить метож {request.method}')
+
         if request.method == 'POST':
             serializer = UserSubscribeSerializer(
-                data=data,
+                data={'user': request.user.pk, 'author': id},
                 context={'request': request}
             )
             serializer.is_valid(raise_exception=True)

@@ -5,6 +5,7 @@ from users.models import Subscription, User
 
 class UserAdmin(admin.ModelAdmin):
     """Регистрация модели пользователя в админке."""
+
     list_display = (
         'id',
         'username',
@@ -24,6 +25,7 @@ class UserAdmin(admin.ModelAdmin):
 
 class SubscriptionAdmin(admin.ModelAdmin):
     """Регистрация модели подписки в админке."""
+
     list_display = (
         'id',
         'user',

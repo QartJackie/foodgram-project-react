@@ -6,11 +6,13 @@ from recipes.models import Recipe, Tag
 
 class TagFilter(SearchFilter):
     """Фильтр тегов по имени."""
+
     search_param = 'name'
 
 
 class IngredientFilter(SearchFilter):
     """Фильтр ингредиентов по имени."""
+
     search_param = 'name'
 
 
@@ -30,6 +32,8 @@ class RecipeFilter(filter.FilterSet):
     )
 
     class Meta:
+        """Мета настройки фильтра рецептов."""
+
         model = Recipe
         fields = (
             'tags',

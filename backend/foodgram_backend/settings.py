@@ -133,4 +133,5 @@ DJOSER = {
     'HIDE_USERS': False,
 }
 
+"""Имя выгружаемого файла."""
 UPLOAD_FILE_NAME = 'shopping_list'

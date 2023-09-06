@@ -40,9 +40,3 @@ python manage.py createsuperuser
 ```
 sudo docker compose -f docker-compose.production.yml exec backend python manage.py importdata
 ```
-
-Данные для проверки работы приложения:
-```
-email: satangeremy@icloud.com
-password: 88754633
-```

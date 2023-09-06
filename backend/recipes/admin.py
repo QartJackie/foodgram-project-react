@@ -28,11 +28,14 @@ class IngredientAdmin(admin.ModelAdmin):
 
 
 class RecipeIngredients(admin.TabularInline):
+    """Ингредиенты для отображения в админке рецептов инлайн."""
+
     model = RecipeIngredientsAmount
 
 
 class RecipeAdmin(admin.ModelAdmin):
     """Модель админки рецептов."""
+
     inlines = [RecipeIngredients, ]
     list_display = (
         'id',
@@ -62,10 +65,14 @@ class RecipeAdmin(admin.ModelAdmin):
     )
 
     def added_to_favorites(self, recipe):
+        """Метод отображения количества добавлений рецептов в избранное."""
+
         return FavoriteRecipe.objects.filter(recipe=recipe).count()
     added_to_favorites.short_description = 'Добавлено в избранное раз'
 
     def recipe_ingredients(self, recipe):
+        """Метод отображения ингредиентов в админке рецепта."""
+
         ingredient_list = []
         for ingredient in recipe.ingredients.all():
             ingredient_list.append(ingredient)
@@ -88,6 +95,7 @@ class RecipeIngredientsAmountAdmin(admin.ModelAdmin):
 
 class ShoppingCartAdmin(admin.ModelAdmin):
     """Модель админки списка покупок."""
+
     list_display = (
         'id',
         'recipe',
@@ -109,6 +117,7 @@ class ShoppingCartAdmin(admin.ModelAdmin):
 
 class FavoriteRecipeAdmin(admin.ModelAdmin):
     """Модель админки избранных рецептов."""
+
     list_display = (
         'id',
         'recipe',

@@ -7,6 +7,7 @@ from users.models import User
 
 class Tag(models.Model):
     """Модель тега."""
+
     name = models.CharField(
         'Название тега',
         max_length=set.TAG_NAME_LENGTH,
@@ -32,16 +33,20 @@ class Tag(models.Model):
     )
 
     class Meta:
+        """Мета настройка отображения модели тега."""
         ordering = ['name']
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
     def __str__(self):
+        """Строковое отображение модели тега."""
+
         return self.name
 
 
 class Ingredient(models.Model):
     """Модель ингридиента."""
+
     name = models.CharField(
         'Название ингридиента',
         max_length=set.INGREDIENT_NAME_LENGTH,
@@ -59,6 +64,9 @@ class Ingredient(models.Model):
     )
 
     class Meta:
+        """Мета настройки отображения модели ингредиента и проверка
+        уникальности количества ингредиента."""
+
         ordering = ['name']
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
@@ -70,6 +78,8 @@ class Ingredient(models.Model):
         ]
 
     def __str__(self):
+        """Строковое отображение модели ингредиента."""
+
         return self.name
 
 
@@ -130,15 +140,20 @@ class Recipe(models.Model):
     create_at = models.DateTimeField('Дата создания', auto_now_add=True)
 
     class Meta:
+        """Мета настройки отображения модели рецепта."""
+
         ordering = ['-create_at']
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
     def __str__(self):
+        """Строковое отображение модели рецепта."""
+
         return self.name
 
 
 class RecipeIngredientsAmount(models.Model):
+    """Вспомогательная модель для указания количества ингредиента."""
 
     recipe = models.ForeignKey(
         Recipe,
@@ -180,11 +195,14 @@ class RecipeIngredientsAmount(models.Model):
         verbose_name_plural = 'Ингредиенты в рецептах'
 
     def __str__(self):
+        """Строковое отображение ингредиента в рецепте."""
+
         return (f'Ингрединет: {self.ingredient.name}'
                 f'из рецепта: {self.recipe.name}')
 
 
 class ShoppingCart(models.Model):
+    """Модель карты покупок."""
 
     recipe = models.ForeignKey(
         Recipe,
@@ -206,6 +224,7 @@ class ShoppingCart(models.Model):
 
     class Meta:
         """Представление модели и валидация уникальности."""
+
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'user'],
@@ -217,6 +236,8 @@ class ShoppingCart(models.Model):
         verbose_name_plural = 'Покупки'
 
     def __str__(self):
+        """Строковое отображение модели карты покупок."""
+
         return f'Рецепт "{self.recipe.name}" в покупках у {self.user}'
 
 
@@ -241,6 +262,9 @@ class FavoriteRecipe(models.Model):
     )
 
     class Meta:
+        """Мета настройки отображения модели избранного и проверка
+        уникальности связи рецепта и пользоватля."""
+
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'user'],
@@ -252,4 +276,6 @@ class FavoriteRecipe(models.Model):
         verbose_name_plural = 'Избранное'
 
     def __str__(self):
+        """Строковое отображения избранного."""
+
         return f'Рецепт "{self.recipe}" в избранном у {self.user}'

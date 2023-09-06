@@ -3,6 +3,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 class IsAuthorOrAdminOrReadOnly(BasePermission):
     """Решение на уровне объектов. """
+
     message = 'Недостаточно прав'
 
     def has_object_permission(self, request, view, obj):
@@ -15,6 +16,7 @@ class IsAuthorOrAdminOrReadOnly(BasePermission):
 
 
 class IsAdminOrReadOnly(BasePermission):
+    """Права администратора на редактирование."""
 
     message = 'Недостаточно прав. Обратитесь к администратору.'
 

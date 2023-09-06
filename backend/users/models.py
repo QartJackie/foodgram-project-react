@@ -42,11 +42,15 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     class Meta:
+        """Мета настройки отображения модели."""
+
         ordering = ['first_name']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
+        """Строковое отображение модели пользователя."""
+
         return (f'{self.first_name} {self.last_name}')
 
 
@@ -81,4 +85,6 @@ class Subscription(models.Model):
         verbose_name_plural = 'Подписки'
 
     def __str__(self):
+        """Строковое отображение модели подписки на автора."""
+
         return f'{self.user} подписан на {self.author}.'
